@@ -93,10 +93,10 @@ The main focus of the project is a clean modern **Liquid Glass** interface with 
 
 ```powershell
 # Клонируй репозиторий • Clone the repository
-git clone https://github.com/kiru0real/liquid_calculator.git
+git clone https://github.com/kiru0real/LiquidCalculator.git
 
 # Перейди в папку • Go to the project folder
-cd liquid_calculator
+cd LiquidCalculator
 
 # Запусти приложение • Run the application
 cargo run
