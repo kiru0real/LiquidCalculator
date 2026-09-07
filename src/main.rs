@@ -1,3 +1,5 @@
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 use eframe::egui;
 
 // ============================================================
@@ -68,10 +70,16 @@ fn operator_pressed_color() -> egui::Color32 {
 // ============================================================
 
 fn main() -> eframe::Result {
+    let icon = eframe::icon_data::from_png_bytes(
+        include_bytes!("../assets/icon.png"),
+    )
+    .expect("Failed to load application icon");
+
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([430.0, 760.0])
-            .with_min_inner_size([380.0, 650.0]),
+            .with_min_inner_size([380.0, 760.0])
+            .with_icon(icon),
         ..Default::default()
     };
 
@@ -1063,6 +1071,21 @@ impl eframe::App for Calculator {
                             ) {
                                 self.calculate_result();
                             }
+                        });
+
+
+                        // ========================================
+                        // GITHUB CREDIT
+                        // ========================================
+
+                        ui.add_space(10.0);
+
+                        ui.vertical_centered(|ui| {
+                            ui.label(
+                                egui::RichText::new("@kiru0real")
+                                    .size(11.0)
+                                    .color(SECONDARY_TEXT),
+                            );
                         });
                     });
             });
