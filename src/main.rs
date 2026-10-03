@@ -100,6 +100,8 @@ struct Calculator {
 
     stored_value: Option<f64>,
 
+    last_pointer_click_time: f64,
+
     pending_operation: Option<Operation>,
 
     last_operation: Option<Operation>,
@@ -136,6 +138,7 @@ impl Default for Calculator {
             waiting_for_number: false,
             expression: String::new(),
             keyboard_flash: None,
+            last_pointer_click_time: -1.0,
             history: Vec::new(),
             history_open: false,
         }
@@ -203,6 +206,7 @@ impl Calculator {
         self.waiting_for_number = false;
         self.expression.clear();
         self.keyboard_flash = None;
+        self.last_pointer_click_time = -1.0;
     }
 
 
@@ -1100,7 +1104,7 @@ impl eframe::App for Calculator {
 impl Calculator {
 
     fn number_button(
-        &self,
+        &mut self,
         ui: &mut egui::Ui,
         text: &str,
         width: f32,
@@ -1119,7 +1123,7 @@ impl Calculator {
 
 
     fn action_button(
-        &self,
+        &mut self,
         ui: &mut egui::Ui,
         text: &str,
         width: f32,
@@ -1153,7 +1157,7 @@ impl Calculator {
 
 
     fn operator_button(
-        &self,
+        &mut self,
         ui: &mut egui::Ui,
         text: &str,
         width: f32,
@@ -1378,7 +1382,7 @@ impl Calculator {
 
 
     fn animated_button(
-        &self,
+        &mut self,
         ui: &mut egui::Ui,
         text: &str,
         width: f32,
@@ -1583,8 +1587,25 @@ impl Calculator {
             ui.ctx().request_repaint();
         }
 
+        // ----------------------------------------------------
+        // Mouse click debounce.
+        //
+        // Very fast clicking can produce a burst of click
+        // events. Ignore clicks that arrive too close together
+        // so the calculator never appears to click by itself.
+        // ----------------------------------------------------
 
-        response.clicked()
+        let now = ui.ctx().input(|input| input.time);
+        let click_cooldown = 0.06;
+
+        if response.clicked()
+            && now - self.last_pointer_click_time >= click_cooldown
+        {
+            self.last_pointer_click_time = now;
+            true
+        } else {
+            false
+        }
     }
 }
 
